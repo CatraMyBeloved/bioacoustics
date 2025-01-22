@@ -1,0 +1,22 @@
+# Core data processing
+numpy
+pandas
+scipy
+
+# Audio processing
+librosa
+soundfile
+
+# Machine Learning
+torch
+
+# Data visualization
+matplotlib
+plotly
+
+# Development tools
+black  # Code formatting
+pytest  # Testing
+
+# Jupyter for exploration
+jupyter
