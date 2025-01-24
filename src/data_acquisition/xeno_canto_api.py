@@ -37,7 +37,7 @@ class XenoCantoRecording:
     gen_species: str
     specific_species: str
     specific_subspecies: str
-    group: str
+    animal_group: str
     en_name: str
     country: str
     location: str
@@ -51,7 +51,7 @@ class XenoCantoRecording:
     length: float
     datetime: datetime
     other_species: str
-
+    filename: str = None
     def download_recording(self, folder = RAW_DATA_DIR):
 
         try:
@@ -59,6 +59,8 @@ class XenoCantoRecording:
                         f"{self.specific_species}_"
                         f"{datetime.strftime(self.datetime, '%Y-%m-%d')}_"
                         f"{self.country}.mp3")
+
+            self.filename = filename
 
             full_path = folder / filename
 
@@ -118,7 +120,7 @@ class XenoCantoRecording:
             gen_species=json_data["gen"],
             specific_species=json_data["sp"],
             specific_subspecies=json_data["ssp"],
-            group=json_data["group"],
+            animal_group=json_data["group"],
             en_name=json_data["en"],
             country=json_data["cnt"],
             location=json_data["loc"],
@@ -184,3 +186,7 @@ class XenoCantoAPI:
             time.sleep(1)
 
 
+    def download_recording(self, recording):
+        print(f'Downloading recording.')
+        recording.download_recording()
+        time.sleep(1)

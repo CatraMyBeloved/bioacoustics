@@ -21,15 +21,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 #%%
 api = XenoCantoAPI()
+db = DatabaseHandler('data/database.db')
 
+db.create_and_connect()
 recordings = api.search_api("Turdus merula", cnt="Germany")
 
-api.download_recordings(recordings[:15])
+for record in recordings[:100]:
+    api.download_recording(record)
+    db.upload_recording(record)
 
 
 #%%
 y, sr = librosa.load(RAW_DATA_DIR /
-                     '842671_Turdus_merula_2023-11-02_Germany.mp3', sr = 22050)
+                     '946922_Turdus_merula_2016-03-20_Germany.mp3')
 D = librosa.stft(y)
 
 D_db = librosa.amplitude_to_db(D)
