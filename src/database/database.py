@@ -4,12 +4,38 @@ import pandas as pd
 import json
 from src.data_acquisition import XenoCantoRecording
 from datetime import datetime
-#TODO: add documentation (snooooore...)
 class DatabaseHandler:
+    """
+    Handles connecting and inserting data into recordings Database
+
+    Parameters
+    ----------
+
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Creates and adds entries to sqlite database. Cannot remove entries.
+
+    See Also
+    --------
+
+    """
     def __init__(self, database_file):
+
         self.database_file = database_file
 
     def create_and_connect(self):
+        """
+        Connects to database, creates table if not existant.
+        Returns
+        -------
+        sqlite3.Connection
+            Connection to database
+        """
         conn = sqlite3.connect(self.database_file)
         cursor = conn.cursor()
 
@@ -50,12 +76,44 @@ class DatabaseHandler:
         return conn
 
     def _dump_to_json(self, list_to_dump):
+        """
+        Helper method to dump list to json
+        Parameters
+        ----------
+        list_to_dump
+            list to dump to json string
+        Returns
+        -------
+        str
+            String containing json formatted list
+        """
         str_list = json.dumps(list_to_dump)
         return str_list
     def _read_from_json(self, str_list):
+        """
+        Helper method to read from json
+        Parameters
+        ----------
+        str_list
+            string containing json formatted list
+        Returns
+        -------
+
+        """
         return json.loads(str_list)
 
     def upload_recording(self, recording: XenoCantoRecording):
+        """
+        Method to upload recording data to database
+        Parameters
+        ----------
+        recording
+            XenoCantoRecording object optained from XenoCantoAPI
+
+        Returns
+        -------
+        None
+        """
         conn = self.create_and_connect()
         recording_temp = recording
         recording_temp.other_species = self._dump_to_json(recording_temp.other_species)
@@ -74,6 +132,12 @@ class DatabaseHandler:
         conn.commit()
 
     def reset_db(self):
+        """
+        Helper method to reset database
+        Returns
+        -------
+        None
+        """
         conn = self.create_and_connect()
         cursor = conn.cursor()
         cursor.execute("DROP TABLE IF EXISTS recordings")

@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 import sqlite3
 import yaml
 from pathlib import Path
-#TODO: Named Rows and general structural improvements and resilience for
+#TODO: Named Rows and general structural improvements and resilience for errors
 #TODO: Add isolating calls to either dataclass or general package
 
 @dataclass
