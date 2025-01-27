@@ -1,0 +1,14 @@
+audio:
+  sample_rate: 22050
+
+database:
+  path: "data/database.db"
+  tables:
+    recordings: "recordings"
+
+visualization:
+  figure_size:
+    spectrum: [15, 4]
+    feature_comparison: [15, 24]
+  style:
+    colormap: "coolwarm"

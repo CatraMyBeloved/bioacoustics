@@ -4,7 +4,7 @@ import pandas as pd
 import json
 from src.data_acquisition import XenoCantoRecording
 from datetime import datetime
-
+#TODO: add documentation (snooooore...)
 class DatabaseHandler:
     def __init__(self, database_file):
         self.database_file = database_file

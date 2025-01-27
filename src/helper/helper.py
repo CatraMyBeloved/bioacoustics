@@ -171,3 +171,7 @@ def create_combined_features(y, sr):
     }
 
     return feature_dict
+
+def load_config():
+    import yaml
+
