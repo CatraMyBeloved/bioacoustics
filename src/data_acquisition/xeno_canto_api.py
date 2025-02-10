@@ -13,7 +13,6 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#TODO: Add documentation(snoooore...)
 import requests
 import json
 import time
@@ -33,6 +32,33 @@ class XenoCantoParseError(XenoCantoError):
 
 @dataclass
 class XenoCantoRecording:
+    """
+    DataClass to store and handle XenoCanto recordings, acquired from the API
+    
+    Parameters
+    ----------
+    
+    
+    Methods
+    ----------
+    download_recording()
+        Downloads the recording to a specified directory.
+    
+    Returns
+    -------
+    None
+    
+    Notes
+    -----
+    This class is largely used to keep the association between files and 
+    their tags/information. When using XenoCantoAPI, you should use 
+    from_json() to create this class. 
+    
+    See Also
+    --------
+    XenoCantoAPI
+    DatabaseHandler
+    """ 
     recording_id : int
     gen_species: str
     specific_species: str
@@ -53,7 +79,16 @@ class XenoCantoRecording:
     other_species: str
     filename: str = None
     def download_recording(self, folder = RAW_DATA_DIR):
+        """
+        Downloads specific recording from XenoCanto database.
+        Parameters
+        ----------
+        folder
+            Path to save the downloaded recording to.
+        Returns
+        -------
 
+        """
         try:
             filename = (f"{self.recording_id}_{self.gen_species}_"
                         f"{self.specific_species}_"
@@ -75,6 +110,17 @@ class XenoCantoRecording:
 
     @staticmethod
     def _parse_length(length):
+        """
+        Helper function for parsing length of recording into seconds.
+        Parameters
+        ----------
+        length
+            String containing the length of recording in the form of MM:SS.
+        Returns
+        -------
+        int
+            Length of recording in seconds.
+        """
         splits = length.split(":")
         match len(splits):
             case 1:
@@ -86,6 +132,19 @@ class XenoCantoRecording:
 
     @staticmethod
     def _parse_datetime(date, time):
+        """
+        Helper function for parsing date and time of recording into seconds.
+        Parameters
+        ----------
+        date
+            Date of recording in the form of YYYY-mm-dd.
+        time
+            Time of recording in the form of HH:MM.
+        Returns
+        -------
+        datetime
+            Datetime object containing the date and time of recording.
+        """
         if time != '?':
             time = '00:00'
 
@@ -110,6 +169,17 @@ class XenoCantoRecording:
 
     @classmethod
     def from_json(cls, json_data):
+        """
+        Method to create XenoCantoRecording object from JSON data acquired
+        from XenoCantoAPI.
+        Parameters
+        ----------
+        json_data
+            JSON data acquired from XenoCantoAPI.
+        Returns
+        -------
+
+        """
         try:
             lat = float(json_data["lat"]) if json_data.get("lat") else None
             lng = float(json_data["lng"]) if json_data.get("lng") else None
@@ -137,10 +207,77 @@ class XenoCantoRecording:
         )
 
 class XenoCantoAPI:
+    """
+    Class to interact and download data from the XenoCantoApi.
+    Intended for use with XenoCantoRecording
+    
+    Parameters
+    ----------
+
+    
+    Methods
+    ----------
+    search_api()
+        searches the XenoCanto database for recordings fitting a number of
+        arguments. Returns list of XenoCantoRecording objects.
+    download_recordings()
+        Downloads a list of XenoCantoRecording objects.
+    
+    Returns
+    -------
+    XenoCantoRecording
+    
+    Notes
+    -----
+    This class is designed to be used with XenoCantoRecording dataclass.
+    Once searched, valid recordings are stored in self.recordings and can be
+    downloaded using download_recordings().
+
+    
+    See Also
+    --------
+    XenoCantoRecording
+    DatabaseHandler
+    """ 
     def __init__(self):
         self.base_url = 'https://xeno-canto.org/api/2/recordings'
 
-    def search_api(self, search_term, **kwargs):
+    def search_api(self, search_term = "", **kwargs):
+        """
+        Method to search XenoCanto API given a search term and other arguments.
+        Parameters
+        ----------
+        search_term
+            Search term to search for, usually a scientific species name.
+        kwargs
+            Other possible arguments passed to XenoCantoAPI.
+            grp: Group such as "birds", "grasshoppers" etc.
+            gen: Genus, only necessary if search_term is None.
+            cnt: Country
+            loc: Locality
+            seen: yes/no, was the animal seen
+            playback: yes/no, was the animal lured by playback
+            box: LAT_MIN,LON_MIN,LAT_MAX,LON_MAX
+            type: Type of call or sound recorded, valid tags are:
+                aberrant, advertisement call, agonistic call, alarm call,
+                begging call, call, calling song, courtship song, dawn song,
+                defensive call, distress call, disturbance song, drumming,
+                duet, echolocation, feeding buzz, female song, flight call,
+                flight song, imitation, mating call, mechanical sound,
+                nocturnal flight call, release call, rivalry song, searching song,
+                 social call, song, subsong, territorial call
+            sex: female or male
+            stage: Life stage, valid tags are:
+                adult, juvenile, nestling, nymph, subadult
+            q: Quality of recording, A to E. Accepts < and >.
+            area: Area of the world, valid tags are:
+                africa, america, asia, australia, europe
+            
+        Returns
+        -------
+        list
+            List of XenoCantoRecording objects.
+        """
         time.sleep(1)
         try:
             search_url = self.base_url + f'?query={search_term}+'
@@ -180,6 +317,16 @@ class XenoCantoAPI:
 
 
     def download_recordings(self, recordings):
+        """
+        Helper method to download recordings from XenoCanto.
+        Parameters
+        ----------
+        recordings
+            list of XenoCantoRecording objects to download.
+        Returns
+        -------
+
+        """
         for i, recording in enumerate(recordings, 1):
             recording.download_recording()
             print(f'Downloaded recording {i}/{len(recordings)}')
@@ -187,6 +334,16 @@ class XenoCantoAPI:
 
 
     def download_recording(self, recording):
+        """
+        Helper method to download recording from XenoCanto.
+        Parameters
+        ----------
+        recording
+            XenoCanto recording object to download.
+        Returns
+        -------
+
+        """
         print(f'Downloading recording.')
         recording.download_recording()
         time.sleep(1)
